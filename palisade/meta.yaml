@@ -1,0 +1,65 @@
+{% set name = "palisade" %}
+# {% set version = "1.9.2" %}
+# {% set sha256 = "d417c16aafc51229f6cae9947a0eb0ceef8fb9e3d87f94d99ee7a37f0bd51eff" %}
+{% set version = "1.10.3" %}
+{% set sha256 = "cf24e1cdcd6f8b9deeef24433c4255d12b571dff50e481e1a4ecd7a10560f33d" %}
+
+package:
+  name: {{ name| lower }}
+  version: {{ version }}
+
+source:
+  - fn: {{ name | upper }}-{{ version | replace('.', '_') }}.tar.gz
+    # url: https://gitlab.com/palisade/palisade-release/-/archive/v{{ version  }}/palisade-release-v{{ version }}.tar.gz
+    url: https://gitlab.com/palisade/palisade-development/-/archive/v{{ version  }}/palisade-development-v{{ version }}.tar.gz
+    sha256: {{ sha256 }}
+#   - url: https://github.com/USCiLab/cereal/archive/51cbda5f30e56c801c07fe3d3aba5d7fb9e6cca4.tar.gz
+#     sha256: 26361b539fe50eee308b564faa2742166d2922a7ab0bd4870ac55708581228c8
+#     folder: third-party/cereal"
+
+channels:
+  - defaults
+  - conda-forge
+
+build:
+  number: 1004
+  skip: true  # [win and vc<14]
+  run_exports:
+    - {{ pin_compatible(name, exact=True) }}
+
+requirements:
+  build:
+    - cmake
+    - make  # [unix]
+    - graphviz
+    # - cereal   # [noarch]
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
+    - zlib
+    # - cereal
+  run:
+    - zlib
+
+# test:
+#   commands:
+#     - test -f ${PREFIX}/lib/libcryptopp.a      # [unix]
+#     - test -f ${PREFIX}/lib/libcryptopp.so     # [linux]
+#     - test -f ${PREFIX}/lib/libcryptopp.dylib  # [osx]
+#     - test -d ${PREFIX}/include/cryptopp       # [unix]
+#     - test -f ${PREFIX}/lib/cmake/cryptopp/cryptopp-config.cmake          # [unix]
+#     - test -f ${PREFIX}/lib/cmake/cryptopp/cryptopp-config-version.cmake  # [unix]
+#     - if exist %LIBRARY_LIB%\cryptopp-static.lib (exit 0) else (exit 1)   # [win]
+#     - if exist %LIBRARY_LIB%\cmake\cryptopp\cryptopp-config.cmake (exit 0) else (exit 1)          # [win]
+#     - if exist %LIBRARY_LIB%\cmake\cryptopp\cryptopp-config-version.cmake (exit 0) else (exit 1)  # [win]
+
+about:
+  home: https://palisade-crypto.org/
+  license: NJIT
+  license_file: License.md
+  summary: A powerful homomorphic encryption library.
+
+extra:
+  recipe-maintainers:
+    - SylvainCorlay
+    - JohanMabille

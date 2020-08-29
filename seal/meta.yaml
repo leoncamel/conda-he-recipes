@@ -1,0 +1,45 @@
+{% set name = "seal" %}
+{% set version = "3.5.8" %}
+{% set sha256 = "515a4e9176f8c8927dc7a76f60bc5b9de5ebabf528adc7324d0081b0b9867172" %}
+
+package:
+  name: {{ name| lower }}
+  version: {{ version }}
+
+source:
+  fn: {{ name | upper }}-{{ version | replace('.', '_') }}.tar.gz
+  url: https://github.com/microsoft/SEAL/archive/{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  skip: true  # [win and vc<14]
+  run_exports:
+    - {{ pin_compatible(name, exact=True) }}
+
+requirements:
+  build:
+    - cmake
+    - make  # [unix]
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
+    - zlib
+  run:
+
+test:
+  commands:
+    - test -f ${PREFIX}/lib/libseal-3.5.a      # [unix]
+    - test -d ${PREFIX}/include/SEAL-3.5       # [unix]
+    - test -f ${PREFIX}/include/SEAL-3.5/seal/seal.h       # [unix]
+
+about:
+  home: https://sealcrypto.org/
+  license: MIT
+  license_file: LICENSE
+  summary: A powerful homomorphic encryption library.
+
+extra:
+  recipe-maintainers:
+    - xiaolin
+
